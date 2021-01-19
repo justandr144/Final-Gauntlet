@@ -13,6 +13,10 @@ namespace Final_Gauntlet
 {
     public partial class Form1 : Form
     {
+        /*The Gauntlet
+         * Justin Andrews
+         * January 19 2021
+         */
         int playerX = 360;
         int playerY = 420;
         int playerSize = 30;
