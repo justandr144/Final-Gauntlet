@@ -143,6 +143,26 @@ namespace Final_Gauntlet.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap lichking {
+            get {
+                object obj = ResourceManager.GetObject("lichking", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap necromancer {
+            get {
+                object obj = ResourceManager.GetObject("necromancer", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap orc1 {
             get {
                 object obj = ResourceManager.GetObject("orc1", resourceCulture);
@@ -156,6 +176,26 @@ namespace Final_Gauntlet.Properties {
         internal static System.Drawing.Bitmap slime {
             get {
                 object obj = ResourceManager.GetObject("slime", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SuperSkeletonLeft {
+            get {
+                object obj = ResourceManager.GetObject("SuperSkeletonLeft", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap SuperSkeletonRight {
+            get {
+                object obj = ResourceManager.GetObject("SuperSkeletonRight", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

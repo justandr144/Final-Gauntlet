@@ -45,13 +45,20 @@ namespace Final_Gauntlet
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 0, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 0, 0, 0 });
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 0, 0, 0 });
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 0, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 30, 0, 0 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 30, 0, 0 });
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 0, 0 });
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 0, 0 });
         List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
         List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
         int fightState = 0;
+
+        List<int> skeletonMaxHP = new List<int>(new int[] { 30, 30, 30, 30, 30, 30 });
+        List<int> skeletonCurrentHP = new List<int>(new int[] { 30, 30, 30, 30, 30, 30 });
+        List<int> skeletonMaxAttack = new List<int>(new int[] { 6, 6, 6, 6, 6, 6 });
+        List<int> skeletonMinAttack = new List<int>(new int[] { 2, 2, 2, 2, 2, 2 });
+        int activeSkeleton1 = 0;
+        int activeSkeleton2 = 0;
 
         int exitX = 300;
         int exitY = 0;
@@ -258,13 +265,25 @@ namespace Final_Gauntlet
                     outputLabel.Visible = false;
                     enemyLabel.Visible = false;
                     fightState = 3;
+                    activeSkeleton1 = 0;
+                    activeSkeleton2 = 1;
                     Movement();
 
-                    if (playerRec.IntersectsWith(exitRec))
+                    if (playerRec.IntersectsWith(enemyRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        state = "fourthFight";
+                    }
+                    if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] <= 0)
                     {
                         playerX = 360;
                         playerY = 420;
                         state = "fifthRoom";
+                    }
+                    else if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        falseExit = true;
                     }
                     break;
                 case "fifthRoom":
@@ -376,6 +395,30 @@ namespace Final_Gauntlet
                     outputLabel.Visible = true;
                     enemyLabel.Visible = true;
 
+                    if (currentHealth > 0 && enemyCurrentHP[fightState] > 0 || skeletonCurrentHP[activeSkeleton1] > 0 || skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        FightMoves();
+                    }
+                    else if (enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton1] <= 0 && skeletonCurrentHP[activeSkeleton2] <=0)
+                    {
+                        state = "secondRoom";
+                        maxHealth += 20;
+                        currentHealth = maxHealth;
+                        maxSP += 3;
+                        currentSP = maxSP;
+                        maxAttack += 1;
+                        minAttack += 1;
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
+                        var enemyDeath = new System.Windows.Media.MediaPlayer();
+                        enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Play();
+                    }
+                    else if (currentHealth <= 0)
+                    {
+                        gameover.Play();
+                        state = "loseScreen";
+                    }
                     break;
                 case "fifthFight":
                     outputLabel.Visible = true;

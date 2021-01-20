@@ -131,5 +131,17 @@
   <ItemGroup>
     <None Include="Resources\orc1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SuperSkeletonRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SuperSkeletonLeft.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\necromancer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\lichking.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
