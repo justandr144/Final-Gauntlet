@@ -124,7 +124,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\victory.mp3" />
+    <None Include="Resources\victory.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\orc1.png" />

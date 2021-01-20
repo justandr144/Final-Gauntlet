@@ -35,17 +35,22 @@ namespace Final_Gauntlet
         int firebolt = 5;
         int healAmount = 0;
         int wolfSpecial = 0;
+        int orcSpecial = 0;
+        int necromancerSpecial = 0;
+        int lichSpecial = 0;
         int bleedCancel = 0;
+        int stunCancel = 0;
+        int stunLimit = 0;
 
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 80, 160, 0, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 80, 160, 0, 0, 0 });
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 7, 0, 0, 0 });
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 4, 0, 0, 0 });
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 10, 0, 0, 0 });
-        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 10, 0, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 0, 0, 0 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 0, 0, 0 });
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 0, 0, 0 });
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 0, 0, 0 });
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
         int fightState = 0;
 
         int exitX = 300;
@@ -69,6 +74,8 @@ namespace Final_Gauntlet
         bool coward = false;
         bool noSP = false;
         bool bleedEffect = false;
+        bool stunEffect = false;
+        bool summonLimit = false;
 
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush orangeBrush = new SolidBrush(Color.Orange);
@@ -291,12 +298,15 @@ namespace Final_Gauntlet
                         state = "firstRoom";
                         maxHealth += 20;
                         currentHealth = maxHealth;
-                        maxSP += 4;
+                        maxSP += 3;
                         currentSP = maxSP;
                         maxAttack += 1;
                         minAttack += 1;
                         outputLabel.Text = "";
                         enemyLabel.Text = "";
+                        var enemyDeath = new System.Windows.Media.MediaPlayer();
+                        enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
                     {
@@ -317,12 +327,15 @@ namespace Final_Gauntlet
                         state = "secondRoom";
                         maxHealth += 20;
                         currentHealth = maxHealth;
-                        maxSP += 4;
+                        maxSP += 3;
                         currentSP = maxSP;
                         maxAttack += 1;
                         minAttack += 1;
                         outputLabel.Text = "";
                         enemyLabel.Text = "";
+                        var enemyDeath = new System.Windows.Media.MediaPlayer();
+                        enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
                     {
@@ -343,12 +356,15 @@ namespace Final_Gauntlet
                         state = "thirdRoom";
                         maxHealth += 20;
                         currentHealth = maxHealth;
-                        maxSP += 4;
+                        maxSP += 3;
                         currentSP = maxSP;
                         maxAttack += 1;
                         minAttack += 1;
                         outputLabel.Text = "";
                         enemyLabel.Text = "";
+                        var enemyDeath = new System.Windows.Media.MediaPlayer();
+                        enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
                     {
@@ -688,8 +704,16 @@ namespace Final_Gauntlet
                     }
                     if (bDown == true)
                     {
-                        mode = "attackMenuYes";
-                        bDown = false;
+                        if (stunEffect == false)
+                        {
+                            mode = "attackMenuYes";
+                            bDown = false;
+                        }
+                        else
+                        {
+                            mode = "stun";
+                            bDown = false;
+                        }
                     }
                     break;
                 case ("skill"):
@@ -703,8 +727,16 @@ namespace Final_Gauntlet
                     }
                     if (bDown == true)
                     {
-                        mode = "skillMenu1";
-                        bDown = false;
+                        if (stunEffect == false)
+                        {
+                            mode = "skillMenu1";
+                            bDown = false;
+                        }
+                        else
+                        {
+                            mode = "stun";
+                            bDown = false;
+                        }
                     }
                     break;
                 case ("defend"):
@@ -718,8 +750,16 @@ namespace Final_Gauntlet
                     }
                     if (bDown == true)
                     {
-                        mode = "defendMenuYes";
-                        bDown = false;
+                        if (stunEffect == false)
+                        {
+                            mode = "defendMenuYes";
+                            bDown = false;
+                        }
+                        else
+                        {
+                            mode = "stun";
+                            bDown = false;
+                        }
                     }
                     break;
                 case ("run"):
@@ -733,8 +773,16 @@ namespace Final_Gauntlet
                     }
                     if (bDown == true)
                     {
-                        mode = "runMenuYes";
-                        bDown = false;
+                        if (stunEffect == false)
+                        {
+                            mode = "runMenuYes";
+                            bDown = false;
+                        }
+                        else
+                        {
+                            mode = "stun";
+                            bDown = false;
+                        }
                     }
                     break;
                 case ("attackMenuYes"):
@@ -903,7 +951,7 @@ namespace Final_Gauntlet
                         nDown = false;
                     }
                     break;
-                case ("defendMenuYes"):
+                case ("defendMenuYes"):                         //Quick note, enemies don't use specials when player is blocking so they don't waste SP and it prevent the player from just letting them use all of their specials for an easy fight
                     if (rightDown == true)
                     {
                         mode = "defendMenuNo";
@@ -1057,6 +1105,10 @@ namespace Final_Gauntlet
                         mode = "run";
                     }
                     break;
+                case "stun":
+                    EnemyAttack();
+                    mode = "attack";
+                    break;
             }
         }
 
@@ -1080,6 +1132,32 @@ namespace Final_Gauntlet
             }
         }
 
+        void Stun()
+        {
+            if (stunEffect == true)
+            {
+                stunCancel = randGen.Next(1, 4);
+
+                if (stunCancel < 3 && stunLimit < 3)
+                {
+                    stunEffect = true;
+                    enemyLabel.Text += "\nYou are stunned and can't attack this turn";
+                    stunLimit++;
+                }
+                else if (stunCancel == 3 && stunLimit == 0)
+                {
+                    stunEffect = true;
+                    enemyLabel.Text += "\nYou are stunned and can't attack this turn";
+                    stunLimit++;
+                }
+                else
+                {
+                    enemyLabel.Text += "\nThe stun effect has worn off";
+                    stunEffect = false;
+                    stunLimit = 0;
+                }
+            }
+        }
         void EnemyAttack()                  //determine enemy damage
         {
             if (enemyCurrentHP[fightState] > 0)
@@ -1112,9 +1190,24 @@ namespace Final_Gauntlet
                         }
                         break;
                     case 2:
-                        enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
-                        enemyLabel.Text = $"Enemy does {enemyDamage} damage";
-                        currentHealth -= enemyDamage;
+                        orcSpecial = randGen.Next(1, 4);
+
+                        if (orcSpecial == 2 && enemyCurrentSP[fightState] >= 3 && stunEffect == false)
+                        {
+                            enemyDamage = randGen.Next(enemyMinAttack[fightState] + 1, enemyMaxAttack[fightState] + 1);
+                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                            currentHealth -= enemyDamage;
+                            enemyCurrentSP[fightState] -= 3;
+                            stunEffect = true;
+                            Stun();
+                        }
+                        else
+                        {
+                            enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                            currentHealth -= enemyDamage;
+                            Stun();
+                        }
                         break;
                     case 3:
 
