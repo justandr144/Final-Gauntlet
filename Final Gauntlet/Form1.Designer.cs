@@ -32,6 +32,8 @@ namespace Final_Gauntlet
             this.components = new System.ComponentModel.Container();
             this.gameTimer = new System.Windows.Forms.Timer(this.components);
             this.testLabel = new System.Windows.Forms.Label();
+            this.outputLabel = new System.Windows.Forms.Label();
+            this.enemyLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // gameTimer
@@ -42,13 +44,33 @@ namespace Final_Gauntlet
             // 
             // testLabel
             // 
-            this.testLabel.BackColor = System.Drawing.Color.Turquoise;
+            this.testLabel.BackColor = System.Drawing.Color.Black;
             this.testLabel.ForeColor = System.Drawing.Color.White;
-            this.testLabel.Location = new System.Drawing.Point(470, 236);
+            this.testLabel.Location = new System.Drawing.Point(601, 87);
             this.testLabel.Name = "testLabel";
             this.testLabel.Size = new System.Drawing.Size(137, 52);
             this.testLabel.TabIndex = 0;
-            this.testLabel.Visible = false;
+            // 
+            // outputLabel
+            // 
+            this.outputLabel.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.outputLabel.ForeColor = System.Drawing.Color.White;
+            this.outputLabel.Location = new System.Drawing.Point(12, 352);
+            this.outputLabel.Name = "outputLabel";
+            this.outputLabel.Size = new System.Drawing.Size(361, 34);
+            this.outputLabel.TabIndex = 1;
+            this.outputLabel.Visible = false;
+            // 
+            // enemyLabel
+            // 
+            this.enemyLabel.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.enemyLabel.ForeColor = System.Drawing.Color.White;
+            this.enemyLabel.Location = new System.Drawing.Point(379, 352);
+            this.enemyLabel.Name = "enemyLabel";
+            this.enemyLabel.Size = new System.Drawing.Size(361, 34);
+            this.enemyLabel.TabIndex = 2;
+            this.enemyLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.enemyLabel.Visible = false;
             // 
             // Form1
             // 
@@ -56,6 +78,8 @@ namespace Final_Gauntlet
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(750, 500);
+            this.Controls.Add(this.enemyLabel);
+            this.Controls.Add(this.outputLabel);
             this.Controls.Add(this.testLabel);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -73,6 +97,8 @@ namespace Final_Gauntlet
 
         private System.Windows.Forms.Timer gameTimer;
         private System.Windows.Forms.Label testLabel;
+        private System.Windows.Forms.Label outputLabel;
+        private System.Windows.Forms.Label enemyLabel;
     }
 }
 
