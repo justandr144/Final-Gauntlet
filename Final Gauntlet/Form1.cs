@@ -17,6 +17,8 @@ namespace Final_Gauntlet
          * Justin Andrews
          * January 19 2021
          */
+
+        //Global Variables
         int playerX = 360;
         int playerY = 420;
         int playerSize = 30;
@@ -31,16 +33,19 @@ namespace Final_Gauntlet
         int playerDamage = 0;
         int enemyDamage = 0;
         int firebolt = 5;
+        int healAmount = 0;
+        int wolfSpecial = 0;
+        int bleedCancel = 0;
 
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 0, 0, 0, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 0, 0, 0, 0, 0 });
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 0, 0, 0, 0, 0 });
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 0, 0, 0, 0, 0 });
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 0, 0, 0, 0, 0 });
-        List<int> enemyCurrentSP = new List<int>(new int[] { 50, 0, 0, 0, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 70, 0, 0, 0, 0 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 70, 0, 0, 0, 0 });
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 13, 0, 0, 0, 0 });
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 0, 0, 0, 0 });
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 0, 0, 0, 0 });
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 0, 0, 0, 0 });
         int fightState = 0;
 
         int exitX = 300;
@@ -63,6 +68,7 @@ namespace Final_Gauntlet
         bool falseExit = false;
         bool coward = false;
         bool noSP = false;
+        bool bleedEffect = false;
 
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush orangeBrush = new SolidBrush(Color.Orange);
@@ -73,6 +79,14 @@ namespace Final_Gauntlet
         SolidBrush blackBrush = new SolidBrush(Color.Black);
         Font screenFont = new Font("Consolas", 12);
 
+        SoundPlayer music = new SoundPlayer(Properties.Resources.backgroundMusic);
+        SoundPlayer attack = new SoundPlayer(Properties.Resources.attack);
+        SoundPlayer defend = new SoundPlayer(Properties.Resources.defend);
+        SoundPlayer fire = new SoundPlayer(Properties.Resources.fire);
+        SoundPlayer heal = new SoundPlayer(Properties.Resources.heal);
+        SoundPlayer gameover = new SoundPlayer(Properties.Resources.gameover);
+        SoundPlayer victory = new SoundPlayer(Properties.Resources.victory);
+
         Random randGen = new Random();
         public Form1()
         {
@@ -81,7 +95,7 @@ namespace Final_Gauntlet
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            switch (e.KeyCode)          //Key press setup
             {
                 case Keys.Up:
                     upDown = true;
@@ -109,7 +123,7 @@ namespace Final_Gauntlet
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            switch (e.KeyCode)
+            switch (e.KeyCode)              //Key press setup
             {
                 case Keys.Up:
                     upDown = false;
@@ -137,22 +151,21 @@ namespace Final_Gauntlet
 
         private void gameTimer_Tick(object sender, EventArgs e)
         {
-            SoundPlayer music = new SoundPlayer(Properties.Resources.backgroundMusic);
 
-            if (musicCounter >= 3400)
+            if (musicCounter >= 3400)           //music loop
             {
                 music.Play();
                 musicCounter = 0;
             }
             musicCounter++;
             testLabel.Text = $"{musicCounter}";
-            Rectangle playerRec = new Rectangle(playerX, playerY, playerSize, playerSize);
+            Rectangle playerRec = new Rectangle(playerX, playerY, playerSize, playerSize);              //Intersect rectangles
             Rectangle enemyRec = new Rectangle(enemyX, enemyY, playerSize, playerSize);
             Rectangle exitRec = new Rectangle(exitX, exitY, exitWidth, exitHeight);
 
             falseExit = false;
 
-            switch (state)
+            switch (state)                                  //Instructions for each room and fight
             {
                 case "startScreen":
                     if (spaceDown == true)
@@ -188,12 +201,21 @@ namespace Final_Gauntlet
                     enemyLabel.Visible = false;
                     fightState = 1;
                     Movement();
-
-                    if (playerRec.IntersectsWith(exitRec))
+                    if (playerRec.IntersectsWith(enemyRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        state = "secondFight";
+                    }
+                    if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] <= 0)
                     {
                         playerX = 360;
                         playerY = 420;
                         state = "thirdRoom";
+                    }
+                    else if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        falseExit = true;
                     }
                     break;
                 case "thirdRoom":
@@ -255,16 +277,38 @@ namespace Final_Gauntlet
                         currentHealth = maxHealth;
                         maxSP += 2;
                         currentSP = maxSP;
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
                     }
                     else if (currentHealth <= 0)
                     {
                         state = "loseScreen";
+                        gameover.Play();
                     }
                     break;
                 case "secondFight":
                     outputLabel.Visible = true;
                     enemyLabel.Visible = true;
 
+                    if (currentHealth > 0 && enemyCurrentHP[fightState] > 0)
+                    {
+                        FightMoves();
+                    }
+                    else if (enemyCurrentHP[fightState] <= 0)
+                    {
+                        state = "secondRoom";
+                        maxHealth += 20;
+                        currentHealth = maxHealth;
+                        maxSP += 2;
+                        currentSP = maxSP;
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
+                    }
+                    else if (currentHealth <= 0)
+                    {
+                        gameover.Play();
+                        state = "loseScreen";
+                    }
                     break;
                 case "thirdFight":
                     outputLabel.Visible = true;
@@ -289,6 +333,7 @@ namespace Final_Gauntlet
                 case "endScreen":
                     outputLabel.Visible = false;
                     enemyLabel.Visible = false;
+                    victory.Play();
 
                     break;
                 case "loseScreen":
@@ -303,12 +348,12 @@ namespace Final_Gauntlet
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            if (falseExit == true)
+            if (falseExit == true)          //prevent early exits
             {
                 e.Graphics.DrawString("You must defeat the enemy in this room before progressing", screenFont, whiteBrush, 115, 100);
             }
 
-            switch (state)
+            switch (state)                      //drawing different screens
             {
                 case "startScreen":
                     e.Graphics.DrawString("Welcome to the game!\nIn this game you control the orange square and take part in awesome \nbattles!\n\nYou move and change menu options with the arrow keys.\nTo select an option, press B and to go back, press N.\n\nTo initiate battle, interact with the enemy icon in the area.\n\nThe white space at the top is the exit. This will be unlocked once the enemy \nis defeated.\n\nMake your way through the dungeon and defeat the boss at the end!", screenFont, whiteBrush, 50, 50);
@@ -325,7 +370,10 @@ namespace Final_Gauntlet
                     break;
                 case "secondRoom":
                     e.Graphics.FillRectangle(orangeBrush, playerX, playerY, playerSize, playerSize);
-                    e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    if (enemyCurrentHP[fightState] > 0)
+                    {
+                        e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    }
                     e.Graphics.FillRectangle(whiteBrush, exitX, exitY, exitWidth, exitHeight);
                     e.Graphics.DrawString("Second Room", screenFont, whiteBrush, 5, 478);
                     break;
@@ -357,12 +405,18 @@ namespace Final_Gauntlet
                     e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
                     e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
                     e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
-                    e.Graphics.DrawString($"HP {enemyCurrentHP[0]}/{enemyMaxHP[0]}", screenFont, whiteBrush, 340, 320);
+                    e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
 
                     MenuPaint();
                     break;
                 case "secondFight":
+                    e.Graphics.DrawImageUnscaled(Properties.Resources.detailedwerewolf__1_, 303, 110);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
+                    e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
+                    e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
+                    e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
 
+                    MenuPaint();
                     break;
                 case "thirdFight":
 
@@ -395,7 +449,7 @@ namespace Final_Gauntlet
                     break;
             }
 
-            void MenuPaint()
+            void MenuPaint()                //fight menu method
             {
                 switch (mode)
                 {
@@ -478,12 +532,16 @@ namespace Final_Gauntlet
                         e.Graphics.DrawString("Choose a Skill", screenFont, whiteBrush, 386, 407);
                         e.Graphics.DrawString("Firebolt 3SP", screenFont, blackBrush, 286, 440);
                         e.Graphics.DrawString("Heal 5SP", screenFont, blackBrush, 531, 440);
+                        if (noSP == true)
+                        {
+                            e.Graphics.DrawString("Not enough SP for that move!", screenFont, whiteBrush, 325, 473);
+                        }
                         break;
                     case "skillMenu1Yes":
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
 
-                        e.Graphics.DrawString("Use Firebolt?",screenFont, whiteBrush, 392, 407);
+                        e.Graphics.DrawString("Use Firebolt?", screenFont, whiteBrush, 392, 407);
                         e.Graphics.DrawString("Yes", screenFont, blackBrush, 328, 440);
                         e.Graphics.DrawString("No", screenFont, blackBrush, 560, 440);
                         break;
@@ -499,13 +557,17 @@ namespace Final_Gauntlet
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
 
-
+                        e.Graphics.DrawString("Use Heal?", screenFont, whiteBrush, 415, 407);
+                        e.Graphics.DrawString("Yes", screenFont, blackBrush, 328, 440);
+                        e.Graphics.DrawString("No", screenFont, blackBrush, 560, 440);
                         break;
                     case "skillMenu2No":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
 
-
+                        e.Graphics.DrawString("Use Heal?", screenFont, whiteBrush, 415, 407);
+                        e.Graphics.DrawString("Yes", screenFont, blackBrush, 328, 440);
+                        e.Graphics.DrawString("No", screenFont, blackBrush, 560, 440);
                         break;
                     case "defendMenuYes":
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
@@ -542,7 +604,7 @@ namespace Final_Gauntlet
                 }
             }
         }
-        void Movement()
+        void Movement()             //room movement method
         {
             if (upDown == true && playerY > 0)
             {
@@ -561,7 +623,7 @@ namespace Final_Gauntlet
                 playerX += playerSpeed;
             }
         }
-        void FightMoves()
+        void FightMoves()                   //movement through fight menu
         {
             switch (mode)
             {
@@ -635,12 +697,9 @@ namespace Final_Gauntlet
                         playerDamage = randGen.Next(minAttack, maxAttack);
                         outputLabel.Text = $"Player does {playerDamage} damage";
                         enemyCurrentHP[fightState] -= playerDamage;
-                        if (enemyCurrentHP[fightState] > 0)
-                        {
-                            enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
-                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
-                            currentHealth -= enemyDamage;
-                        }
+                        attack.Play();
+
+                        EnemyAttack();
                         bDown = false;
                         mode = "attack";
                     }
@@ -691,6 +750,15 @@ namespace Final_Gauntlet
                         mode = "skillMenu1";
                         noSP = false;
                     }
+                    if (bDown == true && currentSP >= 5)
+                    {
+                        mode = "skillMenu2Yes";
+                        bDown = false;
+                    }
+                    else if (bDown == true && currentSP < 5)
+                    {
+                        noSP = true;
+                    }
                     if (nDown == true)
                     {
                         mode = "skill";
@@ -708,12 +776,9 @@ namespace Final_Gauntlet
                         playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
                         outputLabel.Text = $"Player does {playerDamage} damage";
                         enemyCurrentHP[fightState] -= playerDamage;
-                        if (enemyCurrentHP[fightState] > 0)
-                        {
-                            enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
-                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
-                            currentHealth -= enemyDamage;
-                        }
+                        fire.Play();
+
+                        EnemyAttack();
                         bDown = false;
                         mode = "attack";
                     }
@@ -740,10 +805,47 @@ namespace Final_Gauntlet
                     }
                     break;
                 case ("skillMenu2Yes"):
+                    if (rightDown == true)
+                    {
+                        mode = "skillMenu2No";
+                    }
+                    if (bDown == true)
+                    {
+                        currentSP -= 5;
+                        healAmount = randGen.Next(20, 41);
+                        currentHealth += healAmount;
+                        if (currentHealth > maxHealth)
+                        {
+                            currentHealth = maxHealth;
+                        }
+                        outputLabel.Text = $"Player heals {healAmount} HP";
+                        heal.Play();
 
+                        EnemyAttack();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "skillMenu1";
+                        nDown = false;
+                    }
                     break;
                 case ("skillMenu2No"):
-
+                    if (leftDown == true)
+                    {
+                        mode = "skillMenu2Yes";
+                    }
+                    if (bDown == true)
+                    {
+                        mode = "skillMenu2";
+                        bDown = false;
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "skillMenu1";
+                        nDown = false;
+                    }
                     break;
                 case ("defendMenuYes"):
                     if (rightDown == true)
@@ -772,6 +874,7 @@ namespace Final_Gauntlet
                             bDown = false;
                             mode = "attack";
                         }
+                        defend.Play();
                     }
                     if (nDown == true)
                     {
@@ -874,7 +977,7 @@ namespace Final_Gauntlet
                                     currentHealth = 0;
                                 }
                                 break;
-                        }    
+                        }
                     }
                     if (nDown == true)
                     {
@@ -896,6 +999,72 @@ namespace Final_Gauntlet
                         mode = "run";
                     }
                     break;
+            }
+        }
+
+        void Bleed()                    //bleed effect method
+        {
+            if (bleedEffect == true)
+            {
+                bleedCancel = randGen.Next(1, 4);
+                if (bleedCancel < 3)
+                {
+                    int bleedDamage = randGen.Next(2, 6);
+                    currentHealth -= bleedDamage;
+                    enemyLabel.Text += $"\n{bleedDamage} damage done by bleed";
+                }
+                else
+                {
+                    enemyLabel.Text += "\nBleed has worn off";
+                    bleedEffect = false;
+                }
+            }
+        }
+
+        void EnemyAttack()                  //determine enemy damage
+        {
+            if (enemyCurrentHP[fightState] > 0)
+            {
+                switch (fightState)
+                {
+                    case 0:
+                        enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                        enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                        currentHealth -= enemyDamage;
+                        break;
+                    case 1:
+                        wolfSpecial = randGen.Next(1, 11);
+
+                        if (wolfSpecial <= 2 && enemyCurrentSP[fightState] >= 5 && bleedEffect == false)
+                        {
+                            enemyDamage = randGen.Next(enemyMinAttack[fightState] + 3, enemyMaxAttack[fightState] + 3);
+                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                            currentHealth -= enemyDamage;
+                            enemyCurrentSP[fightState] -= 5;
+                            bleedEffect = true;
+                            Bleed();
+                        }
+                        else
+                        {
+                            enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                            enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                            currentHealth -= enemyDamage;
+                            Bleed();
+                        }
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+
+                        break;
+                }
             }
         }
     }

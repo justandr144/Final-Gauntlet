@@ -89,5 +89,29 @@
   <ItemGroup>
     <None Include="Resources\slime %281%29.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\detailedwerewolf %281%29.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\attack.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\defend.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\fire.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\heal.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gameover.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\enemydeath.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\victory.wav" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
