@@ -1007,6 +1007,7 @@ namespace Final_Gauntlet
             if (bleedEffect == true)
             {
                 bleedCancel = randGen.Next(1, 4);
+
                 if (bleedCancel < 3)
                 {
                     int bleedDamage = randGen.Next(2, 6);
