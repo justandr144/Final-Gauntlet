@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Media;
+using System.IO;
 
 namespace Final_Gauntlet
 {
@@ -40,12 +40,12 @@ namespace Final_Gauntlet
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 70, 0, 0, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 70, 0, 0, 0, 0 });
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 13, 0, 0, 0, 0 });
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 0, 0, 0, 0 });
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 0, 0, 0, 0 });
-        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 0, 0, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 80, 160, 0, 0, 0 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 80, 160, 0, 0, 0 });
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 7, 0, 0, 0 });
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 4, 0, 0, 0 });
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 10, 0, 0, 0 });
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 10, 0, 0, 0 });
         int fightState = 0;
 
         int exitX = 300;
@@ -53,7 +53,7 @@ namespace Final_Gauntlet
         int exitWidth = 150;
         int exitHeight = 20;
 
-        int musicCounter = 3400;
+        int musicCounter = 10000;
 
         string state = "startScreen";
         string mode = "attack";
@@ -79,18 +79,23 @@ namespace Final_Gauntlet
         SolidBrush blackBrush = new SolidBrush(Color.Black);
         Font screenFont = new Font("Consolas", 12);
 
-        SoundPlayer music = new SoundPlayer(Properties.Resources.backgroundMusic);
-        SoundPlayer attack = new SoundPlayer(Properties.Resources.attack);
-        SoundPlayer defend = new SoundPlayer(Properties.Resources.defend);
-        SoundPlayer fire = new SoundPlayer(Properties.Resources.fire);
-        SoundPlayer heal = new SoundPlayer(Properties.Resources.heal);
-        SoundPlayer gameover = new SoundPlayer(Properties.Resources.gameover);
-        SoundPlayer victory = new SoundPlayer(Properties.Resources.victory);
+        System.Windows.Media.MediaPlayer music;
+        System.Windows.Media.MediaPlayer gameover;
+        System.Windows.Media.MediaPlayer victory;
 
         Random randGen = new Random();
         public Form1()
         {
             InitializeComponent();
+
+            music = new System.Windows.Media.MediaPlayer();
+            music.Open(new Uri(Application.StartupPath + "/Resources/backgroundmusic.mp3"));
+
+            gameover = new System.Windows.Media.MediaPlayer();
+            gameover.Open(new Uri(Application.StartupPath + "/Resources/gameover.mp3"));
+
+            victory = new System.Windows.Media.MediaPlayer();
+            victory.Open(new Uri(Application.StartupPath + "/Resources/victory.mp3"));
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -152,12 +157,13 @@ namespace Final_Gauntlet
         private void gameTimer_Tick(object sender, EventArgs e)
         {
 
-            if (musicCounter >= 3400)           //music loop
+            if (musicCounter >= 3500)           //music loop
             {
                 music.Play();
                 musicCounter = 0;
             }
             musicCounter++;
+
             testLabel.Text = $"{musicCounter}";
             Rectangle playerRec = new Rectangle(playerX, playerY, playerSize, playerSize);              //Intersect rectangles
             Rectangle enemyRec = new Rectangle(enemyX, enemyY, playerSize, playerSize);
@@ -224,11 +230,21 @@ namespace Final_Gauntlet
                     fightState = 2;
                     Movement();
 
-                    if (playerRec.IntersectsWith(exitRec))
+                    if (playerRec.IntersectsWith(enemyRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        state = "thirdFight";
+                    }
+                    if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] <= 0)
                     {
                         playerX = 360;
                         playerY = 420;
                         state = "fourthRoom";
+                    }
+                    else if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        falseExit = true;
                     }
                     break;
                 case "fourthRoom":
@@ -275,8 +291,10 @@ namespace Final_Gauntlet
                         state = "firstRoom";
                         maxHealth += 20;
                         currentHealth = maxHealth;
-                        maxSP += 2;
+                        maxSP += 4;
                         currentSP = maxSP;
+                        maxAttack += 1;
+                        minAttack += 1;
                         outputLabel.Text = "";
                         enemyLabel.Text = "";
                     }
@@ -299,8 +317,10 @@ namespace Final_Gauntlet
                         state = "secondRoom";
                         maxHealth += 20;
                         currentHealth = maxHealth;
-                        maxSP += 2;
+                        maxSP += 4;
                         currentSP = maxSP;
+                        maxAttack += 1;
+                        minAttack += 1;
                         outputLabel.Text = "";
                         enemyLabel.Text = "";
                     }
@@ -314,6 +334,27 @@ namespace Final_Gauntlet
                     outputLabel.Visible = true;
                     enemyLabel.Visible = true;
 
+                    if (currentHealth > 0 && enemyCurrentHP[fightState] > 0)
+                    {
+                        FightMoves();
+                    }
+                    else if (enemyCurrentHP[fightState] <= 0)
+                    {
+                        state = "thirdRoom";
+                        maxHealth += 20;
+                        currentHealth = maxHealth;
+                        maxSP += 4;
+                        currentSP = maxSP;
+                        maxAttack += 1;
+                        minAttack += 1;
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
+                    }
+                    else if (currentHealth <= 0)
+                    {
+                        gameover.Play();
+                        state = "loseScreen";
+                    }
                     break;
                 case "fourthFight":
                     outputLabel.Visible = true;
@@ -379,7 +420,10 @@ namespace Final_Gauntlet
                     break;
                 case "thirdRoom":
                     e.Graphics.FillRectangle(orangeBrush, playerX, playerY, playerSize, playerSize);
-                    e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    if (enemyCurrentHP[fightState] > 0)
+                    {
+                        e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    }
                     e.Graphics.FillRectangle(whiteBrush, exitX, exitY, exitWidth, exitHeight);
                     e.Graphics.DrawString("Third Room", screenFont, whiteBrush, 5, 478);
                     break;
@@ -419,7 +463,13 @@ namespace Final_Gauntlet
                     MenuPaint();
                     break;
                 case "thirdFight":
+                    e.Graphics.DrawImageUnscaled(Properties.Resources.orc1, 240, 70);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
+                    e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
+                    e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
+                    e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 330, 320);
 
+                    MenuPaint();
                     break;
                 case "fourthFight":
 
@@ -697,6 +747,8 @@ namespace Final_Gauntlet
                         playerDamage = randGen.Next(minAttack, maxAttack);
                         outputLabel.Text = $"Player does {playerDamage} damage";
                         enemyCurrentHP[fightState] -= playerDamage;
+                        var attack = new System.Windows.Media.MediaPlayer();
+                        attack.Open(new Uri(Application.StartupPath + "/Resources/attack.mp3"));
                         attack.Play();
 
                         EnemyAttack();
@@ -776,6 +828,8 @@ namespace Final_Gauntlet
                         playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
                         outputLabel.Text = $"Player does {playerDamage} damage";
                         enemyCurrentHP[fightState] -= playerDamage;
+                        var fire = new System.Windows.Media.MediaPlayer();
+                        fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
                         fire.Play();
 
                         EnemyAttack();
@@ -812,13 +866,15 @@ namespace Final_Gauntlet
                     if (bDown == true)
                     {
                         currentSP -= 5;
-                        healAmount = randGen.Next(20, 41);
+                        healAmount = randGen.Next(15, 31);
                         currentHealth += healAmount;
                         if (currentHealth > maxHealth)
                         {
                             currentHealth = maxHealth;
                         }
                         outputLabel.Text = $"Player heals {healAmount} HP";
+                        var heal = new System.Windows.Media.MediaPlayer();
+                        heal.Open(new Uri(Application.StartupPath + "/Resources/heal.mp3"));
                         heal.Play();
 
                         EnemyAttack();
@@ -874,6 +930,8 @@ namespace Final_Gauntlet
                             bDown = false;
                             mode = "attack";
                         }
+                        var defend = new System.Windows.Media.MediaPlayer();
+                        defend.Open(new Uri(Application.StartupPath + "/Resources/defend.mp3"));
                         defend.Play();
                     }
                     if (nDown == true)
@@ -1006,11 +1064,11 @@ namespace Final_Gauntlet
         {
             if (bleedEffect == true)
             {
-                bleedCancel = randGen.Next(1, 4);
+                bleedCancel = randGen.Next(1, 5);
 
-                if (bleedCancel < 3)
+                if (bleedCancel < 4)
                 {
-                    int bleedDamage = randGen.Next(2, 6);
+                    int bleedDamage = randGen.Next(2, 11);
                     currentHealth -= bleedDamage;
                     enemyLabel.Text += $"\n{bleedDamage} damage done by bleed";
                 }
@@ -1054,7 +1112,9 @@ namespace Final_Gauntlet
                         }
                         break;
                     case 2:
-
+                        enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                        enemyLabel.Text = $"Enemy does {enemyDamage} damage";
+                        currentHealth -= enemyDamage;
                         break;
                     case 3:
 

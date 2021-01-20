@@ -61,29 +61,32 @@ namespace Final_Gauntlet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream attack {
+        internal static byte[] attack {
             get {
-                return ResourceManager.GetStream("attack", resourceCulture);
+                object obj = ResourceManager.GetObject("attack", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream backgroundMusic {
+        internal static byte[] backgroundmusic {
             get {
-                return ResourceManager.GetStream("backgroundMusic", resourceCulture);
+                object obj = ResourceManager.GetObject("backgroundmusic", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream defend {
+        internal static byte[] defend {
             get {
-                return ResourceManager.GetStream("defend", resourceCulture);
+                object obj = ResourceManager.GetObject("defend", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
@@ -98,38 +101,52 @@ namespace Final_Gauntlet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream enemydeath {
+        internal static byte[] enemydeath {
             get {
-                return ResourceManager.GetStream("enemydeath", resourceCulture);
+                object obj = ResourceManager.GetObject("enemydeath", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream fire {
+        internal static byte[] fire {
             get {
-                return ResourceManager.GetStream("fire", resourceCulture);
+                object obj = ResourceManager.GetObject("fire", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream gameover {
+        internal static byte[] gameover {
             get {
-                return ResourceManager.GetStream("gameover", resourceCulture);
+                object obj = ResourceManager.GetObject("gameover", resourceCulture);
+                return ((byte[])(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream heal {
+        internal static byte[] heal {
             get {
-                return ResourceManager.GetStream("heal", resourceCulture);
+                object obj = ResourceManager.GetObject("heal", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap orc1 {
+            get {
+                object obj = ResourceManager.GetObject("orc1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -144,11 +161,12 @@ namespace Final_Gauntlet.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+        ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static System.IO.UnmanagedMemoryStream victory {
+        internal static byte[] victory {
             get {
-                return ResourceManager.GetStream("victory", resourceCulture);
+                object obj = ResourceManager.GetObject("victory", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }
