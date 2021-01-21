@@ -121,6 +121,16 @@ namespace Final_Gauntlet.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon g12_rpg_97293 {
+            get {
+                object obj = ResourceManager.GetObject("g12_rpg_97293", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] gameover {

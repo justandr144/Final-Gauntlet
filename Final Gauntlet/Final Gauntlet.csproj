@@ -143,5 +143,8 @@
   <ItemGroup>
     <None Include="Resources\lichking.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\g12-rpg_97293.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
