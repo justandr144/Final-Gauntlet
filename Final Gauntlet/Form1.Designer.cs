@@ -65,9 +65,9 @@ namespace Final_Gauntlet
             // 
             this.enemyLabel.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.enemyLabel.ForeColor = System.Drawing.Color.White;
-            this.enemyLabel.Location = new System.Drawing.Point(377, 340);
+            this.enemyLabel.Location = new System.Drawing.Point(332, 340);
             this.enemyLabel.Name = "enemyLabel";
-            this.enemyLabel.Size = new System.Drawing.Size(361, 42);
+            this.enemyLabel.Size = new System.Drawing.Size(406, 42);
             this.enemyLabel.TabIndex = 2;
             this.enemyLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             this.enemyLabel.Visible = false;

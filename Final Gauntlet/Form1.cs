@@ -24,12 +24,12 @@ namespace Final_Gauntlet
         int playerSize = 30;
         int playerSpeed = 9;
 
-        int maxHealth = 100;
-        int currentHealth = 100;
+        int maxHealth = 100; //100
+        int currentHealth = 100; //100
         int maxAttack = 8; //8
         int minAttack = 4; //4
-        int maxSP = 10;
-        int currentSP = 10;
+        int maxSP = 10; //10
+        int currentSP = 10; //10
         int playerDamage = 0;
         int enemyDamage = 0;
         int skeleton1Damage = 0;
@@ -44,23 +44,22 @@ namespace Final_Gauntlet
         int bleedLimit = 0;
         int stunCancel = 0;
         int stunLimit = 0;
-        int testCounter = 0;
 
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 45, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 45, 0, 0 });
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 0, 0 });
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 0, 0 });
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
-        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 133});
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 133});
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 10, 12});
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 5, 4});
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 90});
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 90});
         int fightState = 0;
 
-        List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
-        List<int> skeletonCurrentHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
-        List<int> skeletonMaxAttack = new List<int>(new int[] { 9, 9, 9, 9, 9, 9, 0 });
-        List<int> skeletonMinAttack = new List<int>(new int[] { 3, 3, 3, 3, 3, 3, 0 });
+        List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0});
+        List<int> skeletonCurrentHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0});
+        List<int> skeletonMaxAttack = new List<int>(new int[] { 9, 9, 6, 6, 6, 6, 0});
+        List<int> skeletonMinAttack = new List<int>(new int[] { 3, 3, 3, 3, 3, 3, 0});
         int activeSkeleton1 = 0;
         int activeSkeleton2 = 0;
 
@@ -86,7 +85,7 @@ namespace Final_Gauntlet
         bool noSP = false;
         bool bleedEffect = false;
         bool stunEffect = false;
-        bool summonLimit = false;
+        bool drainEffect = false;
 
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush orangeBrush = new SolidBrush(Color.Orange);
@@ -175,7 +174,7 @@ namespace Final_Gauntlet
         private void gameTimer_Tick(object sender, EventArgs e)
         {
 
-            if (musicCounter >= 3800)           //music loop
+            if (musicCounter >= 3600)           //music loop
             {
                 music.Stop();
                 music.Play();
@@ -183,7 +182,7 @@ namespace Final_Gauntlet
             }
             musicCounter++;
 
-            testLabel.Text = $"{testCounter}";
+            testLabel.Text = $"{musicCounter}";
             Rectangle playerRec = new Rectangle(playerX, playerY, playerSize, playerSize);              //Intersect rectangles
             Rectangle enemyRec = new Rectangle(enemyX, enemyY, playerSize, playerSize);
             Rectangle exitRec = new Rectangle(exitX, exitY, exitWidth, exitHeight);
@@ -196,6 +195,7 @@ namespace Final_Gauntlet
                     if (spaceDown == true)
                     {
                         state = "firstRoom";
+                        spaceDown = false;
                     }
                     break;
                 case "firstRoom":
@@ -305,11 +305,21 @@ namespace Final_Gauntlet
                     activeSkeleton2 = 3;
                     Movement();
 
-                    if (playerRec.IntersectsWith(exitRec))
+                    if (playerRec.IntersectsWith(enemyRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        state = "fifthFight";
+                    }
+                    if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] <= 0)
                     {
                         playerX = 360;
                         playerY = 420;
                         state = "finalRoom";
+                    }
+                    else if (playerRec.IntersectsWith(exitRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        falseExit = true;
                     }
                     break;
                 case "finalRoom":
@@ -319,6 +329,13 @@ namespace Final_Gauntlet
                     activeSkeleton1 = 4;
                     activeSkeleton2 = 5;
                     Movement();
+
+                    if (playerRec.IntersectsWith(enemyRec) && enemyCurrentHP[fightState] > 0)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        state = "finalFight";
+                    }
                     break;
                 case "firstFight":
                     outputLabel.Visible = true;
@@ -346,6 +363,9 @@ namespace Final_Gauntlet
                     else if (currentHealth <= 0)
                     {
                         state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
                         gameover.Play();
                     }
                     break;
@@ -375,8 +395,11 @@ namespace Final_Gauntlet
                     }
                     else if (currentHealth <= 0)
                     {
-                        gameover.Play();
                         state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
+                        gameover.Play();
                     }
                     break;
                 case "thirdFight":
@@ -405,8 +428,11 @@ namespace Final_Gauntlet
                     }
                     else if (currentHealth <= 0)
                     {
-                        gameover.Play();
                         state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
+                        gameover.Play();
                     }
                     break;
                 case "fourthFight":
@@ -435,25 +461,103 @@ namespace Final_Gauntlet
                     }
                     else if (currentHealth <= 0)
                     {
-                        gameover.Play();
                         state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
+                        gameover.Play();
                     }
                     break;
                 case "fifthFight":
                     outputLabel.Visible = true;
                     enemyLabel.Visible = true;
 
+                    if (currentHealth > 0 && enemyCurrentHP[fightState] > 0 || currentHealth > 0 && skeletonCurrentHP[activeSkeleton1] > 0 || currentHealth > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        FightMoves();
+                    }
+                    else if (enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton1] <= 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                    {
+                        state = "fifthRoom";
+                        maxHealth += 20;
+                        currentHealth = maxHealth;
+                        maxSP += 3;
+                        currentSP = maxSP;
+                        maxAttack += 1;
+                        minAttack += 1;
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
+                        var enemyDeath = new System.Windows.Media.MediaPlayer();
+                        enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Stop();
+                        enemyDeath.Play();
+                    }
+                    else if (currentHealth <= 0)
+                    {
+                        state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
+                        gameover.Play();
+                    }
                     break;
                 case "finalFight":
                     outputLabel.Visible = true;
                     enemyLabel.Visible = true;
 
+                    if (currentHealth > 0 && enemyCurrentHP[fightState] > 0 || currentHealth > 0 && skeletonCurrentHP[activeSkeleton1] > 0 || currentHealth > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        FightMoves();
+                    }
+                    else if (enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton1] <= 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                    {
+                        state = "endScreen";
+                        outputLabel.Text = "";
+                        enemyLabel.Text = "";
+                    }
+                    else if (currentHealth <= 0)
+                    {
+                        state = "loseScreen";
+                        music.Stop();
+                        musicCounter = 0;
+                        gameover.Stop();
+                        gameover.Play();
+                    }
                     break;
                 case "endScreen":
                     outputLabel.Visible = false;
                     enemyLabel.Visible = false;
+                    music.Stop();
                     victory.Play();
+                    musicCounter = 0;
 
+                    if (spaceDown == true)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        maxHealth = 100;
+                        currentHealth = maxHealth;
+                        maxAttack = 8;
+                        minAttack = 4;
+                        maxSP = 10;
+                        currentSP = maxSP;
+                        fightState = 0;
+                        activeSkeleton1 = 6;
+                        activeSkeleton2 = 6;
+                        state = "firstRoom";
+                        mode = "attack";
+                        coward = false;
+                        bleedEffect = false;
+                        stunEffect = false;
+                        for (int i = 0; i < 6; i++)
+                        {
+                            enemyCurrentHP[i] = enemyMaxHP[i];
+                            enemyCurrentSP[i] = enemyMaxSP[i];
+                            skeletonCurrentHP[i] = skeletonMaxHP[i];
+                        }
+                        musicCounter = 0;
+                        music.Play();
+                    }
                     break;
                 case "loseScreen":
                     outputLabel.Visible = false;
@@ -477,13 +581,14 @@ namespace Final_Gauntlet
                         coward = false;
                         bleedEffect = false;
                         stunEffect = false;
-                        summonLimit = false;
                         for (int i = 0; i < 6; i++)
                         {
                             enemyCurrentHP[i] = enemyMaxHP[i];
                             enemyCurrentSP[i] = enemyMaxSP[i];
                             skeletonCurrentHP[i] = skeletonMaxHP[i];
                         }
+                        musicCounter = 0;
+                        music.Play();
                     }
                     break;
             }
@@ -542,7 +647,10 @@ namespace Final_Gauntlet
                     break;
                 case "fifthRoom":
                     e.Graphics.FillRectangle(orangeBrush, playerX, playerY, playerSize, playerSize);
-                    e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    if (enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton1] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        e.Graphics.FillRectangle(redBrush, enemyX, enemyY, playerSize, playerSize);
+                    }
                     e.Graphics.FillRectangle(whiteBrush, exitX, exitY, exitWidth, exitHeight);
                     e.Graphics.DrawString("Fifth Room", screenFont, whiteBrush, 5, 478);
                     break;
@@ -601,25 +709,65 @@ namespace Final_Gauntlet
                     MenuPaint();
                     break;
                 case "fifthFight":
+                    if (skeletonCurrentHP[activeSkeleton1] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonRight, 157, 100);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton1]}/{skeletonMaxHP[activeSkeleton1]}", screenFont, whiteBrush, 190, 320);
+                    }
+                    if (enemyCurrentHP[fightState] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.necromancer, 307, 100);
+                        e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
+                    }
+                    if (skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonLeft, 457, 100);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton2]}/{skeletonMaxHP[activeSkeleton2]}", screenFont, whiteBrush, 490, 320);
+                    }
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
+                    e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
+                    e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
 
+                    MenuPaint();
                     break;
                 case "finalFight":
+                    if (skeletonCurrentHP[activeSkeleton1] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonRight, 60, 130);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton1]}/{skeletonMaxHP[activeSkeleton1]}", screenFont, whiteBrush, 85, 320);
+                    }
+                    if (enemyCurrentHP[fightState] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.lichking, 243, 30);
+                        e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
+                    }
+                    if (skeletonCurrentHP[activeSkeleton2] > 0)
+                    {
+                        e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonLeft, 550, 130);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton2]}/{skeletonMaxHP[activeSkeleton2]}", screenFont, whiteBrush, 585, 320);
+                    }
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
+                    e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
+                    e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
 
+                    MenuPaint();
                     break;
                 case "endScreen":
-
+                    e.Graphics.DrawString("Congratulations for beating the game!", screenFont, whiteBrush, 207, 140);
+                    e.Graphics.DrawString("You can play again if you like!", screenFont, whiteBrush, 234, 220);
+                    e.Graphics.DrawString("Press Space to Play Again!", screenFont, whiteBrush, 260, 300);
                     break;
                 case "loseScreen":
                     if (coward == false)
                     {
-                        e.Graphics.DrawString("Game Over!", screenFont, whiteBrush, 320, 140);
+                        e.Graphics.DrawString("Game Over!", screenFont, whiteBrush, 324, 140);
                         e.Graphics.DrawString("You have fallen to the army of monsters, however this is a game so you \n                  may retry as may times as you want.", screenFont, whiteBrush, 50, 220);
                         e.Graphics.DrawString("Press Space to Try Again!", screenFont, whiteBrush, 255, 320);
                     }
                     else
                     {
-                        e.Graphics.DrawString("Game Over!", screenFont, whiteBrush, 320, 140);
-                        e.Graphics.DrawString("I warned you. You coward", screenFont, whiteBrush, 150, 220);
+                        e.Graphics.DrawString("Game Over!", screenFont, whiteBrush, 324, 140);
+                        e.Graphics.DrawString("I warned you, you coward", screenFont, whiteBrush, 257, 220);
                         e.Graphics.DrawString("Press Space to Try Again!", screenFont, whiteBrush, 255, 320);
                     }
                     break;
@@ -1071,7 +1219,6 @@ namespace Final_Gauntlet
                             EnemyAttack();
                             mode = "attack";
                             bDown = false;
-                            testCounter++;
                         }
 
                         if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
@@ -1476,6 +1623,7 @@ namespace Final_Gauntlet
                                     outputLabel.Text = "You can not run from this fight";
                                     coward = true;
                                     mode = "attack";
+                                    bDown = false;
                                 }
                                 else if (coward == true)
                                 {
@@ -1891,18 +2039,18 @@ namespace Final_Gauntlet
         {
             if (stunEffect == true)
             {
-                stunCancel = randGen.Next(1, 4);
+                stunCancel = randGen.Next(1, 3);
 
-                if (stunCancel < 3 && stunLimit < 3)
+                if (stunCancel < 2 && stunLimit < 3)
                 {
                     stunEffect = true;
-                    enemyLabel.Text += "\nYou are stunned and can't attack this turn";
+                    enemyLabel.Text += "\nYou are stunned and can't attack";
                     stunLimit++;
                 }
                 else if (stunCancel == 3 && stunLimit == 0)
                 {
                     stunEffect = true;
-                    enemyLabel.Text += "\nYou are stunned and can't attack this turn";
+                    enemyLabel.Text += "\nYou are stunned and can't attack";
                     stunLimit++;
                 }
                 else
@@ -1910,6 +2058,18 @@ namespace Final_Gauntlet
                     enemyLabel.Text += "\nThe stun effect has worn off";
                     stunEffect = false;
                     stunLimit = 0;
+                }
+            }
+        }
+        void Drain()
+        {
+            if (drainEffect == true)
+            {
+                enemyLabel.Text += $"\nMiddle Enemy healed {enemyDamage}";
+                enemyCurrentHP[fightState] += enemyDamage;
+            if (enemyCurrentHP[fightState] > enemyMaxHP[fightState])
+                {
+                    enemyCurrentHP[fightState] = enemyMaxHP[fightState];
                 }
             }
         }
@@ -1976,9 +2136,9 @@ namespace Final_Gauntlet
                             mode = "attack";
                         }
 
-                        enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
                         if (enemyCurrentHP[fightState] > 0)
                         {
+                            enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
                             currentHealth -= enemyDamage;
                             enemyLabel.Text += $"{enemyDamage}, ";
                             bDown = false;
@@ -1989,18 +2149,132 @@ namespace Final_Gauntlet
                         if (skeletonCurrentHP[activeSkeleton2] > 0)
                         {
                             currentHealth -= skeleton2Damage;
-                            enemyLabel.Text += $"{skeleton2Damage}";
+                            enemyLabel.Text += $"{skeleton2Damage} ";
                             bDown = false;
                             mode = "attack";
                         }
 
-                        enemyLabel.Text += " damage";
+                        enemyLabel.Text += "damage";
                         break;
                     case 4:
+                        enemyLabel.Text = "Enemy does ";
 
+                        skeleton1Damage = randGen.Next(skeletonMinAttack[activeSkeleton1], skeletonMaxAttack[activeSkeleton1]);
+                        if (skeletonCurrentHP[activeSkeleton1] > 0)
+                        {
+                            currentHealth -= skeleton1Damage;
+                            enemyLabel.Text += $"{skeleton1Damage}, ";
+                            bDown = false;
+                            mode = "attack";
+                        }
+
+                        enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                        if (enemyCurrentHP[fightState] > 0)
+                        {
+                            necromancerSpecial = randGen.Next(1, 5);
+                            if (necromancerSpecial == 3 && enemyCurrentSP[fightState] >= 10 && enemyCurrentHP[fightState] < enemyMaxHP[fightState])
+                            {
+                                enemyCurrentSP[fightState] -= 10;
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                drainEffect = true;
+                                bDown = false;
+                                mode = "attack";
+                            }
+                            else
+                            {
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                drainEffect = false;
+                                bDown = false;
+                                mode = "attack";
+                            }
+                        }
+
+                        skeleton2Damage = randGen.Next(skeletonMinAttack[activeSkeleton2], skeletonMaxAttack[activeSkeleton2]);
+                        if (skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            currentHealth -= skeleton2Damage;
+                            enemyLabel.Text += $"{skeleton2Damage} ";
+                            bDown = false;
+                            mode = "attack";
+                        }
+
+                        enemyLabel.Text += "damage";
+                        Drain();
                         break;
                     case 5:
+                        enemyLabel.Text = "Enemy does ";
 
+                        skeleton1Damage = randGen.Next(skeletonMinAttack[activeSkeleton1], skeletonMaxAttack[activeSkeleton1]);
+                        if (skeletonCurrentHP[activeSkeleton1] > 0)
+                        {
+                            currentHealth -= skeleton1Damage;
+                            enemyLabel.Text += $"{skeleton1Damage}, ";
+                            bDown = false;
+                            mode = "attack";
+                        }
+
+                        if (enemyCurrentHP[fightState] > 0)
+                        {
+                            lichSpecial = randGen.Next(1, 9);
+                            if (lichSpecial < 3 && enemyCurrentSP[fightState] >= 10 && bleedEffect == false && stunEffect == false) //bleed
+                            {
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState] + 3, enemyMaxAttack[fightState] + 3);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                bDown = false;
+                                mode = "attack";
+                                enemyCurrentSP[fightState] -= 10;
+                                bleedEffect = true;
+                                drainEffect = false;
+                            }
+                            else if (lichSpecial < 5 && enemyCurrentSP[fightState] >= 5 && stunEffect == false && bleedEffect == false) //stun
+                            {
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState] + 1, enemyMaxAttack[fightState] + 1);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                bDown = false;
+                                mode = "attack";
+                                enemyCurrentSP[fightState] -= 5;
+                                stunEffect = true;
+                                drainEffect = false;
+                            }
+                            else if (lichSpecial == 5 && enemyCurrentSP[fightState] >= 20 && enemyCurrentHP[fightState] < enemyMaxHP[fightState] && bleedEffect == false && stunEffect == false) //drain
+                            {
+                                enemyCurrentSP[fightState] -= 20;
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                drainEffect = true;
+                                bDown = false;
+                                mode = "attack";
+                            }
+                            else
+                            {
+                                enemyDamage = randGen.Next(enemyMinAttack[fightState], enemyMaxAttack[fightState]);
+                                currentHealth -= enemyDamage;
+                                enemyLabel.Text += $"{enemyDamage}, ";
+                                bDown = false;
+                                mode = "attack";
+                            }
+                        }
+
+                        skeleton2Damage = randGen.Next(skeletonMinAttack[activeSkeleton2], skeletonMaxAttack[activeSkeleton2]);
+                        if (skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            currentHealth -= skeleton2Damage;
+                            enemyLabel.Text += $"{skeleton2Damage} ";
+                            bDown = false;
+                            mode = "attack";
+                        }
+
+                        enemyLabel.Text += "damage";
+                        Bleed();
+                        Stun();
+                        Drain();
                         break;
                 }
             }
