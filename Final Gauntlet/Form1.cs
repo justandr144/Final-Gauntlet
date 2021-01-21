@@ -26,8 +26,8 @@ namespace Final_Gauntlet
 
         int maxHealth = 100;
         int currentHealth = 100;
-        int maxAttack = 8;
-        int minAttack = 4;
+        int maxAttack = 8; //8
+        int minAttack = 4; //4
         int maxSP = 10;
         int currentSP = 10;
         int playerDamage = 0;
@@ -49,18 +49,18 @@ namespace Final_Gauntlet
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 40, 0, 0 });
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 40, 0, 0 });
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 160, 45, 0, 0 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 160, 45, 0, 0 });
         List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 0, 0 });
         List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 0, 0 });
         List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
         List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 0, 0 });
         int fightState = 0;
 
-        List<int> skeletonMaxHP = new List<int>(new int[] { 40, 40, 40, 40, 40, 40, 0 });
-        List<int> skeletonCurrentHP = new List<int>(new int[] { 40, 40, 40, 40, 40, 40, 0 });
-        List<int> skeletonMaxAttack = new List<int>(new int[] { 6, 6, 6, 6, 6, 6, 0 });
-        List<int> skeletonMinAttack = new List<int>(new int[] { 2, 2, 2, 2, 2, 2, 0 });
+        List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
+        List<int> skeletonCurrentHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
+        List<int> skeletonMaxAttack = new List<int>(new int[] { 9, 9, 9, 9, 9, 9, 0 });
+        List<int> skeletonMinAttack = new List<int>(new int[] { 3, 3, 3, 3, 3, 3, 0 });
         int activeSkeleton1 = 0;
         int activeSkeleton2 = 0;
 
@@ -340,6 +340,7 @@ namespace Final_Gauntlet
                         enemyLabel.Text = "";
                         var enemyDeath = new System.Windows.Media.MediaPlayer();
                         enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Stop();
                         enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
@@ -369,6 +370,7 @@ namespace Final_Gauntlet
                         enemyLabel.Text = "";
                         var enemyDeath = new System.Windows.Media.MediaPlayer();
                         enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Stop();
                         enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
@@ -398,6 +400,7 @@ namespace Final_Gauntlet
                         enemyLabel.Text = "";
                         var enemyDeath = new System.Windows.Media.MediaPlayer();
                         enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Stop();
                         enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
@@ -414,7 +417,7 @@ namespace Final_Gauntlet
                     {
                         FightMoves();
                     }
-                    else if (enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton1] <= 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                    else if (enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton1] <= 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
                     {
                         state = "fourthRoom";
                         maxHealth += 20;
@@ -427,6 +430,7 @@ namespace Final_Gauntlet
                         enemyLabel.Text = "";
                         var enemyDeath = new System.Windows.Media.MediaPlayer();
                         enemyDeath.Open(new Uri(Application.StartupPath + "/Resources/enemydeath.mp3"));
+                        enemyDeath.Stop();
                         enemyDeath.Play();
                     }
                     else if (currentHealth <= 0)
@@ -455,6 +459,32 @@ namespace Final_Gauntlet
                     outputLabel.Visible = false;
                     enemyLabel.Visible = false;
 
+                    if (spaceDown == true)
+                    {
+                        playerX = 360;
+                        playerY = 420;
+                        maxHealth = 100;
+                        currentHealth = maxHealth;
+                        maxAttack = 8;
+                        minAttack = 4;
+                        maxSP = 10;
+                        currentSP = maxSP;
+                        fightState = 0;
+                        activeSkeleton1 = 6;
+                        activeSkeleton2 = 6;
+                        state = "firstRoom";
+                        mode = "attack";
+                        coward = false;
+                        bleedEffect = false;
+                        stunEffect = false;
+                        summonLimit = false;
+                        for (int i = 0; i < 6; i++)
+                        {
+                            enemyCurrentHP[i] = enemyMaxHP[i];
+                            enemyCurrentSP[i] = enemyMaxSP[i];
+                            skeletonCurrentHP[i] = skeletonMaxHP[i];
+                        }
+                    }
                     break;
             }
 
@@ -552,21 +582,21 @@ namespace Final_Gauntlet
                     if (skeletonCurrentHP[activeSkeleton1] > 0)
                     {
                         e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonRight, 157, 100);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton1]}/{skeletonMaxHP[activeSkeleton1]}", screenFont, whiteBrush, 190, 320);
                     }
                     if (enemyCurrentHP[fightState] > 0)
                     {
                         e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonLeft, 307, 100);
+                        e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
                     }
                     if (skeletonCurrentHP[activeSkeleton2] > 0)
                     {
                         e.Graphics.DrawImageUnscaled(Properties.Resources.SuperSkeletonLeft, 457, 100);
+                        e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton2]}/{skeletonMaxHP[activeSkeleton2]}", screenFont, whiteBrush, 490, 320);
                     }
                     e.Graphics.FillRectangle(darkSlateGrayBrush, 0, 400, 750, 200);
                     e.Graphics.DrawString($"HP {currentHealth}/{maxHealth}", screenFont, whiteBrush, 50, 420);
                     e.Graphics.DrawString($"SP {currentSP}/{maxSP}", screenFont, whiteBrush, 50, 460);
-                    e.Graphics.DrawString($"HP {enemyCurrentHP[fightState]}/{enemyMaxHP[fightState]}", screenFont, whiteBrush, 340, 320);
-                    e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton1]}/{skeletonMaxHP[activeSkeleton1]}", screenFont, whiteBrush, 190, 320);
-                    e.Graphics.DrawString($"HP {skeletonCurrentHP[activeSkeleton2]}/{skeletonMaxHP[activeSkeleton2]}", screenFont, whiteBrush, 490, 320);
 
                     MenuPaint();
                     break;
@@ -753,6 +783,9 @@ namespace Final_Gauntlet
                         e.Graphics.FillRectangle(lightBlueBrush, 566, 435, 133, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
                         break;
                     case "threeEnemiesMid":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 133, 30);
@@ -760,6 +793,9 @@ namespace Final_Gauntlet
                         e.Graphics.FillRectangle(lightBlueBrush, 566, 435, 133, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
                         break;
                     case "threeEnemiesRight":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 133, 30);
@@ -767,42 +803,135 @@ namespace Final_Gauntlet
                         e.Graphics.FillRectangle(blueBrush, 566, 435, 133, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
                         break;
                     case "twoLeftEnemiesLeft":
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 543, 440);
                         break;
                     case "twoLeftEnemiesMid":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 543, 440);
                         break;
                     case "twoRightEnemiesMid":
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 313, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
                         break;
                     case "twoRightEnemiesRight":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 313, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
                         break;
                     case "twoSplitEnemiesLeft":
                         e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
                         break;
                     case "twoSplitEnemiesRight":
                         e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
                         e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
 
                         e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
+                        break;
+                    case "threeEnemiesLeftS":
+                        e.Graphics.FillRectangle(blueBrush, 240, 435, 133, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 403, 435, 133, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 566, 435, 133, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
+                        break;
+                    case "threeEnemiesMidS":
+                        e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 133, 30);
+                        e.Graphics.FillRectangle(blueBrush, 403, 435, 133, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 566, 435, 133, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
+                        break;
+                    case "threeEnemiesRightS":
+                        e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 133, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 403, 435, 133, 30);
+                        e.Graphics.FillRectangle(blueBrush, 566, 435, 133, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 399, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 288, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 440, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 608, 440);
+                        break;
+                    case "twoLeftEnemiesLeftS":
+                        e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 543, 440);
+                        break;
+                    case "twoLeftEnemiesMidS":
+                        e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 543, 440);
+                        break;
+                    case "twoRightEnemiesMidS":
+                        e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 313, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
+                        break;
+                    case "twoRightEnemiesRightS":
+                        e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Middle", screenFont, blackBrush, 313, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
+                        break;
+                    case "twoSplitEnemiesLeftS":
+                        e.Graphics.FillRectangle(blueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(lightBlueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
+                        break;
+                    case "twoSplitEnemiesRightS":
+                        e.Graphics.FillRectangle(lightBlueBrush, 240, 435, 200, 30);
+                        e.Graphics.FillRectangle(blueBrush, 470, 435, 200, 30);
+
+                        e.Graphics.DrawString("Choose a Target", screenFont, whiteBrush, 385, 407);
+                        e.Graphics.DrawString("Left", screenFont, blackBrush, 322, 440);
+                        e.Graphics.DrawString("Right", screenFont, blackBrush, 548, 440);
                         break;
                 }
             }
@@ -936,6 +1065,7 @@ namespace Final_Gauntlet
                             enemyCurrentHP[fightState] -= playerDamage;
                             var attack = new System.Windows.Media.MediaPlayer();
                             attack.Open(new Uri(Application.StartupPath + "/Resources/attack.mp3"));
+                            attack.Stop();
                             attack.Play();
 
                             EnemyAttack();
@@ -943,7 +1073,7 @@ namespace Final_Gauntlet
                             bDown = false;
                             testCounter++;
                         }
-                        
+
                         if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
                         {
                             bDown = false;
@@ -969,7 +1099,7 @@ namespace Final_Gauntlet
                             bDown = false;
                             mode = "leftEnemy";
                         }
-                        else if (skeletonCurrentHP[activeSkeleton1] <= 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                        else if (skeletonCurrentHP[activeSkeleton1] <= 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] <= 0 && activeSkeleton1 < 6)
                         {
                             bDown = false;
                             mode = "midEnemy";
@@ -1049,17 +1179,56 @@ namespace Final_Gauntlet
                     }
                     if (bDown == true)
                     {
-                        currentSP -= 3;
-                        playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
-                        outputLabel.Text = $"Player does {playerDamage} damage";
-                        enemyCurrentHP[fightState] -= playerDamage;
-                        var fire = new System.Windows.Media.MediaPlayer();
-                        fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
-                        fire.Play();
+                        if (activeSkeleton1 == 6)
+                        {
+                            currentSP -= 3;
+                            playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
+                            outputLabel.Text = $"Player does {playerDamage} damage";
+                            enemyCurrentHP[fightState] -= playerDamage;
+                            var fire = new System.Windows.Media.MediaPlayer();
+                            fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
+                            fire.Stop();
+                            fire.Play();
 
-                        EnemyAttack();
-                        bDown = false;
-                        mode = "attack";
+                            EnemyAttack();
+                            bDown = false;
+                            mode = "attack";
+                        }
+                        if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            bDown = false;
+                            mode = "threeEnemiesLeftS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                        {
+                            bDown = false;
+                            mode = "twoLeftEnemiesLeftS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            bDown = false;
+                            mode = "twoSplitEnemiesLeftS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] <= 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            bDown = false;
+                            mode = "twoRightEnemiesMidS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton2] <= 0)
+                        {
+                            bDown = false;
+                            mode = "leftEnemyS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] <= 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] <= 0 && activeSkeleton1 < 6)
+                        {
+                            bDown = false;
+                            mode = "midEnemyS";
+                        }
+                        else if (skeletonCurrentHP[activeSkeleton1] <= 0 && enemyCurrentHP[fightState] <= 0 && skeletonCurrentHP[activeSkeleton2] > 0)
+                        {
+                            bDown = false;
+                            mode = "rightEnemyS";
+                        }
                     }
                     if (nDown == true)
                     {
@@ -1097,9 +1266,11 @@ namespace Final_Gauntlet
                         {
                             currentHealth = maxHealth;
                         }
+                        bleedEffect = false;
                         outputLabel.Text = $"Player heals {healAmount} HP";
                         var heal = new System.Windows.Media.MediaPlayer();
                         heal.Open(new Uri(Application.StartupPath + "/Resources/heal.mp3"));
+                        heal.Stop();
                         heal.Play();
 
                         EnemyAttack();
@@ -1203,6 +1374,7 @@ namespace Final_Gauntlet
                         enemyLabel.Text += " damage";
                         var defend = new System.Windows.Media.MediaPlayer();
                         defend.Open(new Uri(Application.StartupPath + "/Resources/defend.mp3"));
+                        defend.Stop();
                         defend.Play();
                     }
                     if (nDown == true)
@@ -1509,6 +1681,180 @@ namespace Final_Gauntlet
                     MidAttack();
                     mode = "attack";
                     break;
+                case "threeEnemiesLeftS":
+                    if (rightDown == true)
+                    {
+                        mode = "threeEnemiesMidS";
+                        rightDown = false;
+                    }
+                    if (bDown == true)
+                    {
+                        LeftAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "threeEnemiesMidS":
+                    if (rightDown == true)
+                    {
+                        mode = "threeEnemiesRightS";
+                        rightDown = false;
+                    }
+                    if (leftDown == true)
+                    {
+                        mode = "threeEnemiesLeftS";
+                        leftDown = false;
+                    }
+                    if (bDown == true)
+                    {
+                        MidAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "threeEnemiesRightS":
+                    if (leftDown == true)
+                    {
+                        mode = "threeEnemiesMidS";
+                        leftDown = false;
+                    }
+                    if (bDown == true)
+                    {
+                        RightAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoLeftEnemiesLeftS":
+                    if (rightDown == true)
+                    {
+                        mode = "twoLeftEnemiesMidS";
+                    }
+                    if (bDown == true)
+                    {
+                        LeftAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoLeftEnemiesMidS":
+                    if (leftDown == true)
+                    {
+                        mode = "twoLeftEnemiesLeftS";
+                    }
+                    if (bDown == true)
+                    {
+                        MidAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoRightEnemiesMidS":
+                    if (rightDown == true)
+                    {
+                        mode = "twoRightEnemiesRightS";
+                    }
+                    if (bDown == true)
+                    {
+                        MidAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoRightEnemiesRightS":
+                    if (leftDown == true)
+                    {
+                        mode = "twoRightEnemiesMidS";
+                    }
+                    if (bDown == true)
+                    {
+                        RightAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoSplitEnemiesLeftS":
+                    if (rightDown == true)
+                    {
+                        mode = "twoSplitEnemiesRightS";
+                    }
+                    if (bDown == true)
+                    {
+                        LeftAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "twoSplitEnemiesRightS":
+                    if (leftDown == true)
+                    {
+                        mode = "twoSplitEnemiesLeftS";
+                    }
+                    if (bDown == true)
+                    {
+                        RightAttackS();
+                        bDown = false;
+                        mode = "attack";
+                    }
+                    if (nDown == true)
+                    {
+                        mode = "attack";
+                        nDown = false;
+                    }
+                    break;
+                case "leftEnemyS":
+                    LeftAttackS();
+                    mode = "attack";
+                    break;
+                case "rightEnemyS":
+                    RightAttackS();
+                    mode = "attack";
+                    break;
+                case "midEnemyS":
+                    MidAttackS();
+                    mode = "attack";
+                    break;
+
             }
         }
 
@@ -1535,6 +1881,7 @@ namespace Final_Gauntlet
                 else
                 {
                     enemyLabel.Text += "\nBleed has worn off";
+                    bleedLimit = 0;
                     bleedEffect = false;
                 }
             }
@@ -1665,6 +2012,7 @@ namespace Final_Gauntlet
             skeletonCurrentHP[activeSkeleton1] -= playerDamage;
             var attack = new System.Windows.Media.MediaPlayer();
             attack.Open(new Uri(Application.StartupPath + "/Resources/attack.mp3"));
+            attack.Stop();
             attack.Play();
 
             EnemyAttack();
@@ -1678,6 +2026,7 @@ namespace Final_Gauntlet
             enemyCurrentHP[fightState] -= playerDamage;
             var attack = new System.Windows.Media.MediaPlayer();
             attack.Open(new Uri(Application.StartupPath + "/Resources/attack.mp3"));
+            attack.Stop();
             attack.Play();
 
             EnemyAttack();
@@ -1691,7 +2040,53 @@ namespace Final_Gauntlet
             skeletonCurrentHP[activeSkeleton2] -= playerDamage;
             var attack = new System.Windows.Media.MediaPlayer();
             attack.Open(new Uri(Application.StartupPath + "/Resources/attack.mp3"));
+            attack.Stop();
             attack.Play();
+
+            EnemyAttack();
+            bDown = false;
+            mode = "attack";
+        }
+        void LeftAttackS()
+        {
+            currentSP -= 3;
+            playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
+            outputLabel.Text = $"Player does {playerDamage} damage";
+            skeletonCurrentHP[activeSkeleton1] -= playerDamage;
+            var fire = new System.Windows.Media.MediaPlayer();
+            fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
+            fire.Stop();
+            fire.Play();
+
+            EnemyAttack();
+            bDown = false;
+            mode = "attack";
+        }
+        void MidAttackS()
+        {
+            currentSP -= 3;
+            playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
+            outputLabel.Text = $"Player does {playerDamage} damage";
+            enemyCurrentHP[fightState] -= playerDamage;
+            var fire = new System.Windows.Media.MediaPlayer();
+            fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
+            fire.Stop();
+            fire.Play();
+
+            EnemyAttack();
+            bDown = false;
+            mode = "attack";
+        }
+        void RightAttackS()
+        {
+            currentSP -= 3;
+            playerDamage = randGen.Next(minAttack + firebolt, maxAttack + firebolt);
+            outputLabel.Text = $"Player does {playerDamage} damage";
+            skeletonCurrentHP[activeSkeleton2] -= playerDamage;
+            var fire = new System.Windows.Media.MediaPlayer();
+            fire.Open(new Uri(Application.StartupPath + "/Resources/fire.mp3"));
+            fire.Stop();
+            fire.Play();
 
             EnemyAttack();
             bDown = false;
