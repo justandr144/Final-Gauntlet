@@ -44,6 +44,7 @@ namespace Final_Gauntlet
         int bleedLimit = 0;
         int stunCancel = 0;
         int stunLimit = 0;
+        int testCounter = 0;
 
         int enemyX = 360;
         int enemyY = 235;
@@ -182,7 +183,7 @@ namespace Final_Gauntlet
             }
             musicCounter++;
 
-            testLabel.Text = $"{musicCounter}";
+            testLabel.Text = $"{testCounter}";
             Rectangle playerRec = new Rectangle(playerX, playerY, playerSize, playerSize);              //Intersect rectangles
             Rectangle enemyRec = new Rectangle(enemyX, enemyY, playerSize, playerSize);
             Rectangle exitRec = new Rectangle(exitX, exitY, exitWidth, exitHeight);
@@ -194,7 +195,7 @@ namespace Final_Gauntlet
                 case "startScreen":
                     if (spaceDown == true)
                     {
-                        state = "fourthRoom";
+                        state = "firstRoom";
                     }
                     break;
                 case "firstRoom":
@@ -938,8 +939,9 @@ namespace Final_Gauntlet
                             attack.Play();
 
                             EnemyAttack();
-                            bDown = false;
                             mode = "attack";
+                            bDown = false;
+                            testCounter++;
                         }
                         
                         if (skeletonCurrentHP[activeSkeleton1] > 0 && enemyCurrentHP[fightState] > 0 && skeletonCurrentHP[activeSkeleton2] > 0)
