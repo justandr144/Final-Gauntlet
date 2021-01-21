@@ -50,6 +50,7 @@ namespace Final_Gauntlet
             this.testLabel.Name = "testLabel";
             this.testLabel.Size = new System.Drawing.Size(137, 52);
             this.testLabel.TabIndex = 0;
+            this.testLabel.Visible = false;
             // 
             // outputLabel
             // 
