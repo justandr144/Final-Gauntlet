@@ -48,12 +48,12 @@ namespace Final_Gauntlet
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 133});
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 133});
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 10, 12});
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120});
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120});
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 10, 9});
         List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 5, 4});
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 90});
-        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 90});
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70});
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70});
         int fightState = 0;
 
         List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0});
@@ -2077,6 +2077,7 @@ namespace Final_Gauntlet
         {
             if (enemyCurrentHP[fightState] > 0 || skeletonCurrentHP[activeSkeleton1] > 0 || skeletonCurrentHP[activeSkeleton2] > 0)
             {
+                lichSpecial = randGen.Next(1, 9);
                 switch (fightState)
                 {
                     case 0:
@@ -2219,8 +2220,7 @@ namespace Final_Gauntlet
 
                         if (enemyCurrentHP[fightState] > 0)
                         {
-                            lichSpecial = randGen.Next(1, 9);
-                            if (lichSpecial < 3 && enemyCurrentSP[fightState] >= 10 && bleedEffect == false && stunEffect == false) //bleed
+                            if (lichSpecial == 1 && enemyCurrentSP[fightState] >= 10 && bleedEffect == false && stunEffect == false || lichSpecial == 2 && enemyCurrentSP[fightState] >= 10 && bleedEffect == false && stunEffect == false) //bleed
                             {
                                 enemyDamage = randGen.Next(enemyMinAttack[fightState] + 3, enemyMaxAttack[fightState] + 3);
                                 currentHealth -= enemyDamage;
@@ -2231,7 +2231,7 @@ namespace Final_Gauntlet
                                 bleedEffect = true;
                                 drainEffect = false;
                             }
-                            else if (lichSpecial < 5 && enemyCurrentSP[fightState] >= 5 && stunEffect == false && bleedEffect == false) //stun
+                            else if (lichSpecial == 3 && enemyCurrentSP[fightState] >= 5 && stunEffect == false && bleedEffect == false || lichSpecial == 4 && enemyCurrentSP[fightState] >= 5 && stunEffect == false && bleedEffect == false) //stun
                             {
                                 enemyDamage = randGen.Next(enemyMinAttack[fightState] + 1, enemyMaxAttack[fightState] + 1);
                                 currentHealth -= enemyDamage;
