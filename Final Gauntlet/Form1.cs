@@ -1,4 +1,9 @@
-﻿using System;
+﻿/* January 2021
+ * Justin Andrews
+ * A gauntlet style game with turnbased combat
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,10 +18,6 @@ namespace Final_Gauntlet
 {
     public partial class Form1 : Form
     {
-        /*The Gauntlet
-         * Justin Andrews
-         * January 19 2021
-         */
 
         //Global Variables
         int playerX = 360;
