@@ -48,18 +48,18 @@ namespace Final_Gauntlet
         int enemyX = 360;
         int enemyY = 235;
 
-        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120});
-        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120});
-        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 10, 9});
-        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 5, 4});
-        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70});
-        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70});
+        List<int> enemyMaxHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120 });
+        List<int> enemyCurrentHP = new List<int>(new int[] { 50, 100, 150, 45, 90, 120 });
+        List<int> enemyMaxAttack = new List<int>(new int[] { 6, 14, 8, 6, 10, 9 });
+        List<int> enemyMinAttack = new List<int>(new int[] { 2, 3, 5, 2, 5, 4 });
+        List<int> enemyMaxSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70 });
+        List<int> enemyCurrentSP = new List<int>(new int[] { 0, 10, 9, 0, 50, 70 });
         int fightState = 0;
 
-        List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0});
-        List<int> skeletonCurrentHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0});
-        List<int> skeletonMaxAttack = new List<int>(new int[] { 9, 9, 6, 6, 6, 6, 0});
-        List<int> skeletonMinAttack = new List<int>(new int[] { 3, 3, 3, 3, 3, 3, 0});
+        List<int> skeletonMaxHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
+        List<int> skeletonCurrentHP = new List<int>(new int[] { 45, 45, 45, 45, 45, 45, 0 });
+        List<int> skeletonMaxAttack = new List<int>(new int[] { 9, 9, 6, 6, 6, 6, 0 });
+        List<int> skeletonMinAttack = new List<int>(new int[] { 3, 3, 3, 3, 3, 3, 0 });
         int activeSkeleton1 = 0;
         int activeSkeleton2 = 0;
 
@@ -86,6 +86,8 @@ namespace Final_Gauntlet
         bool bleedEffect = false;
         bool stunEffect = false;
         bool drainEffect = false;
+        bool normal = false;
+        bool hard = false;
 
         SolidBrush redBrush = new SolidBrush(Color.Red);
         SolidBrush orangeBrush = new SolidBrush(Color.Orange);
@@ -94,6 +96,8 @@ namespace Final_Gauntlet
         SolidBrush lightBlueBrush = new SolidBrush(Color.LightBlue);
         SolidBrush blueBrush = new SolidBrush(Color.DodgerBlue);
         SolidBrush blackBrush = new SolidBrush(Color.Black);
+        Pen greenPen = new Pen(Color.Green, 3);
+        Pen redPen = new Pen(Color.Red, 3);
         Font screenFont = new Font("Consolas", 12);
 
         System.Windows.Media.MediaPlayer music;
@@ -194,7 +198,7 @@ namespace Final_Gauntlet
                 case "startScreen":
                     if (spaceDown == true)
                     {
-                        state = "firstRoom";
+                        state = "normalDifficulty";
                         spaceDown = false;
                     }
                     break;
@@ -544,11 +548,13 @@ namespace Final_Gauntlet
                         fightState = 0;
                         activeSkeleton1 = 6;
                         activeSkeleton2 = 6;
-                        state = "firstRoom";
+                        state = "normalDifficulty";
                         mode = "attack";
                         coward = false;
                         bleedEffect = false;
                         stunEffect = false;
+                        normal = false;
+                        hard = false;
                         for (int i = 0; i < 6; i++)
                         {
                             enemyCurrentHP[i] = enemyMaxHP[i];
@@ -565,30 +571,159 @@ namespace Final_Gauntlet
 
                     if (spaceDown == true)
                     {
-                        playerX = 360;
-                        playerY = 420;
-                        maxHealth = 100;
-                        currentHealth = maxHealth;
-                        maxAttack = 8;
-                        minAttack = 4;
-                        maxSP = 10;
-                        currentSP = maxSP;
-                        fightState = 0;
-                        activeSkeleton1 = 6;
-                        activeSkeleton2 = 6;
-                        state = "firstRoom";
-                        mode = "attack";
-                        coward = false;
-                        bleedEffect = false;
-                        stunEffect = false;
-                        for (int i = 0; i < 6; i++)
+                        if (hard == true)
                         {
-                            enemyCurrentHP[i] = enemyMaxHP[i];
-                            enemyCurrentSP[i] = enemyMaxSP[i];
-                            skeletonCurrentHP[i] = skeletonMaxHP[i];
+                            playerX = 360;
+                            playerY = 420;
+                            maxHealth = 100;
+                            currentHealth = maxHealth;
+                            maxAttack = 8;
+                            minAttack = 4;
+                            maxSP = 10;
+                            currentSP = maxSP;
+                            outputLabel.Text = "";
+                            enemyLabel.Text = "";
+                            fightState = 0;
+                            activeSkeleton1 = 6;
+                            activeSkeleton2 = 6;
+                            state = "firstRoom";
+                            mode = "attack";
+                            coward = false;
+                            bleedEffect = false;
+                            stunEffect = false;
+                            for (int i = 0; i < 6; i++)
+                            {
+                                enemyCurrentHP[i] = enemyMaxHP[i];
+                                enemyCurrentSP[i] = enemyMaxSP[i];
+                                skeletonCurrentHP[i] = skeletonMaxHP[i];
+                            }
+                            musicCounter = 0;
+                            music.Play();
                         }
-                        musicCounter = 0;
-                        music.Play();
+                        else if (normal == true)
+                        {
+                            playerX = 360;
+                            playerY = 420;
+                            currentHealth = maxHealth;
+                            currentSP = maxSP;
+                            outputLabel.Text = "";
+                            enemyLabel.Text = "";
+                            if (fightState == 0)
+                            {
+                                state = "firstRoom";
+                            }
+                            else if (fightState == 1)
+                            {
+                                state = "secondRoom";
+                            }
+                            else if (fightState == 2)
+                            {
+                                state = "thirdRoom";
+                            }
+                            else if (fightState == 3)
+                            {
+                                state = "fourthRoom";
+                            }
+                            else if (fightState == 4)
+                            {
+                                state = "fifthRoom";
+                            }
+                            else if (fightState == 5)
+                            {
+                                state = "finalRoom";
+                            }
+                            mode = "attack";
+                            coward = false;
+                            bleedEffect = false;
+                            stunEffect = false;
+                            enemyCurrentHP[fightState] = enemyMaxHP[fightState];
+                            enemyCurrentSP[fightState] = enemyMaxSP[fightState];
+                            skeletonCurrentHP[fightState] = skeletonMaxHP[fightState];
+                            musicCounter = 0;
+                            music.Play();
+                        }
+                    }
+                    break;
+                case "normalDifficulty":
+                    if (rightDown == true)
+                    {
+                        state = "hardDifficulty";
+                    }
+                    if (bDown == true)
+                    {
+                        state = "normalDifficultyYes";
+                        bDown = false;
+                    }
+                    break;
+                case "hardDifficulty":
+                    if (leftDown == true)
+                    {
+                        state = "normalDifficulty";
+                    }
+                    if (bDown == true)
+                    {
+                        state = "hardDifficultyYes";
+                        bDown = false;
+                    }
+                    break;
+                case "normalDifficultyYes":
+                    if (rightDown == true)
+                    {
+                        state = "normalDifficultyNo";
+                    }
+                    if (bDown == true)
+                    {
+                        normal = true;
+                        state = "firstRoom";
+                    }
+                    if (nDown == true)
+                    {
+                        state = "normalDifficulty";
+                    }
+                    break;
+                case "normalDifficultyNo":
+                    if (leftDown == true)
+                    {
+                        state = "normalDifficultyYes";
+                    }
+                    if (bDown == true)
+                    {
+                        state = "normalDifficulty";
+                        bDown = false;
+                    }
+                    if (nDown == true)
+                    {
+                        state = "normalDifficulty";
+                    }
+                    break;
+                case "hardDifficultyYes":
+                    if (rightDown == true)
+                    {
+                        state = "hardDifficultyNo";
+                    }
+                    if (bDown == true)
+                    {
+                        hard = true;
+                        state = "firstRoom";
+                    }
+                    if (nDown == true)
+                    {
+                        state = "hardDifficulty";
+                    }
+                    break;
+                case "hardDifficultyNo":
+                    if (leftDown == true)
+                    {
+                        state = "hardDifficultyYes";
+                    }
+                    if (bDown == true)
+                    {
+                        state = "hardDifficulty";
+                        bDown = false;
+                    }
+                    if (nDown == true)
+                    {
+                        state = "hardDifficulty";
                     }
                     break;
             }
@@ -770,6 +905,66 @@ namespace Final_Gauntlet
                         e.Graphics.DrawString("I warned you, you coward", screenFont, whiteBrush, 257, 220);
                         e.Graphics.DrawString("Press Space to Try Again!", screenFont, whiteBrush, 255, 320);
                     }
+                    break;
+                case "normalDifficulty":
+                    e.Graphics.DrawRectangle(greenPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(redPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 133, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Normal: When retrying, player only restarts the current room", screenFont, whiteBrush, 100, 225);
+                    e.Graphics.DrawString("Normal", screenFont, whiteBrush, 202, 366);
+                    e.Graphics.DrawString("Hard", screenFont, whiteBrush, 502, 366);
+                    break;
+                case "hardDifficulty":
+                    e.Graphics.DrawRectangle(greenPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(redPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 423, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Hard: When retrying, player restarts at the very beginning", screenFont, whiteBrush, 107, 225);
+                    e.Graphics.DrawString("Normal", screenFont, whiteBrush, 202, 366);
+                    e.Graphics.DrawString("Hard", screenFont, whiteBrush, 502, 366);
+                    break;
+                case "normalDifficultyYes":
+                    e.Graphics.DrawRectangle(greenPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(greenPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 133, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Are you sure you want to select Normal?", screenFont, whiteBrush, 197, 225);
+                    e.Graphics.DrawString("Yes", screenFont, whiteBrush, 216, 366);
+                    e.Graphics.DrawString("No", screenFont, whiteBrush, 512, 366);
+                    break;
+                case "normalDifficultyNo":
+                    e.Graphics.DrawRectangle(greenPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(greenPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 423, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Are you sure you want to select Normal?", screenFont, whiteBrush, 197, 225);
+                    e.Graphics.DrawString("Yes", screenFont, whiteBrush, 216, 366);
+                    e.Graphics.DrawString("No", screenFont, whiteBrush, 512, 366);
+                    break;
+                case "hardDifficultyYes":
+                    e.Graphics.DrawRectangle(redPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(redPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 133, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Are you sure you want to select Hard?", screenFont, whiteBrush, 206, 225);
+                    e.Graphics.DrawString("Yes", screenFont, whiteBrush, 216, 366);
+                    e.Graphics.DrawString("No", screenFont, whiteBrush, 512, 366);
+                    break;
+                case "hardDifficultyNo":
+                    e.Graphics.DrawRectangle(redPen, 131, 350, 200, 50);
+                    e.Graphics.DrawRectangle(redPen, 421, 350, 200, 50);
+                    e.Graphics.FillRectangle(darkSlateGrayBrush, 423, 352, 197, 47);
+
+                    e.Graphics.DrawString("Please Select a Difficulty", screenFont, whiteBrush, 255, 120);
+                    e.Graphics.DrawString("Are you sure you want to select Hard?", screenFont, whiteBrush, 206, 225);
+                    e.Graphics.DrawString("Yes", screenFont, whiteBrush, 216, 366);
+                    e.Graphics.DrawString("No", screenFont, whiteBrush, 512, 366);
                     break;
             }
 
@@ -2067,7 +2262,7 @@ namespace Final_Gauntlet
             {
                 enemyLabel.Text += $"\nMiddle Enemy healed {enemyDamage}";
                 enemyCurrentHP[fightState] += enemyDamage;
-            if (enemyCurrentHP[fightState] > enemyMaxHP[fightState])
+                if (enemyCurrentHP[fightState] > enemyMaxHP[fightState])
                 {
                     enemyCurrentHP[fightState] = enemyMaxHP[fightState];
                 }
